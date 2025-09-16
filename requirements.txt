@@ -1,0 +1,12 @@
+numpy
+torch==2.7.0
+torchvision
+git+https://github.com/huggingface/diffusers.git@refs/pull/11815/head
+Pillow
+transformers
+accelerate
+protobuf
+safetensors
+sentencepiece
+opencv-python-headless
+git+https://github.com/black-forest-labs/flux.git
