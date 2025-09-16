@@ -23,8 +23,8 @@ from diffusers.pipelines.stable_diffusion.safety_checker import (
 )
 
 MAX_IMAGE_SIZE = 1440
-MODEL_CACHE = "./checkpoints"
-SAFETY_CACHE = "safety-cache"
+MODEL_CACHE = "/src/checkpoints"   # ✅ dùng đường dẫn tuyệt đối
+SAFETY_CACHE = "/src/safety-cache" # ✅ sửa luôn cho đồng bộ
 FEATURE_EXTRACTOR = "/src/feature-extractor"
 SAFETY_URL = "https://weights.replicate.delivery/default/sdxl/safety-1.0.tar"
 MODEL_URL = "https://weights.replicate.delivery/default/black-forest-labs/kontext/huggingface/main.tar"
@@ -53,6 +53,7 @@ def download_weights(url, dest, file=False):
         subprocess.check_call(["pget", url, dest], close_fds=False)
     print("downloading took: ", time.time() - start)
 
+
 class Predictor(BasePredictor):
     def setup(self) -> None:
         """Load the model into memory to make running multiple predictions efficient"""
@@ -71,11 +72,11 @@ class Predictor(BasePredictor):
         
         print("Loading Flux txt2img Pipeline")
         if not os.path.exists(MODEL_CACHE):
-            download_weights(MODEL_URL, '.')
+            os.makedirs(MODEL_CACHE, exist_ok=True)
+            download_weights(MODEL_URL, MODEL_CACHE)
         self.txt2img_pipe = FluxPipeline.from_pretrained(
             MODEL_CACHE,
             torch_dtype=torch.bfloat16,
-            cache_dir=MODEL_CACHE
         ).to("cuda")
         self.txt2img_pipe.__class__.load_lora_into_transformer = classmethod(
             load_lora_into_transformer
